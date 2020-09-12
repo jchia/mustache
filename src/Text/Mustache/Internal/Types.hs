@@ -6,6 +6,7 @@
 {-# LANGUAGE MultiParamTypeClasses      #-}
 {-# LANGUAGE TemplateHaskell            #-}
 {-# LANGUAGE TupleSections              #-}
+{-# LANGUAGE UndecidableInstances       #-}
 module Text.Mustache.Internal.Types where
 
 
@@ -156,11 +157,8 @@ instance ToMustache Float where
 instance ToMustache Double where
   toMustache = Number . fromFloatDigits
 
-instance ToMustache Integer where
-  toMustache = Number . fromInteger
-
-instance ToMustache Int where
-  toMustache = toMustache . toInteger
+instance {-# OVERLAPPABLE #-} Integral α => ToMustache α where
+  toMustache = Number . fromInteger . toInteger
 
 instance ToMustache Char where
   toMustache = toMustache . (:[])
